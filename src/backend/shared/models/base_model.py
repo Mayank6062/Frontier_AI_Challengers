@@ -1,55 +1,70 @@
 """
-Shared base model utilities.
+Shared base model utilities using Pydantic as required by architecture.
 
-Provides a lightweight, dataclass-based base model with
-serialization helpers used across the backend.
+Provides a canonical Pydantic `BaseModel` subclass with immutable
+configuration, stable (de)serialization helpers and bridge methods
+to preserve existing callers' expectations (`to_dict`, `from_dict`).
 """
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, fields
-from typing import Any, Dict, Type, TypeVar
+from typing import Any, Dict, Type, TypeVar, Optional
 
 T = TypeVar("T", bound="BaseModel")
 
+try:
+    # Prefer Pydantic v2 API; v1 share BaseModel import as well
+    from pydantic import BaseModel as _PydanticBaseModel
+    from pydantic import Field
+    from pydantic import ConfigDict
+    _PYDANTIC_V2 = True
+except Exception:
+    try:
+        from pydantic import BaseModel as _PydanticBaseModel  # type: ignore
+        from pydantic import Field  # type: ignore
+        _PYDANTIC_V2 = False
+    except Exception as exc:  # pragma: no cover - environment dependent
+        raise RuntimeError("Pydantic is required for Shared BaseModel") from exc
 
-@dataclass(frozen=True)
-class BaseModel:
-    """Immutable base model with simple (de)serialization helpers.
 
-    Subclass this for plain-data DTOs that must be immutable and
-    serializable to dictionaries.
+class BaseModel(_PydanticBaseModel):
+    """Canonical shared BaseModel implemented on top of Pydantic.
 
-    Usage:
-        @dataclass(frozen=True)
-        class Foo(BaseModel):
-            a: int
-            b: str
-
-        f = Foo(1, "x")
-        d = f.to_dict()
-        f2 = Foo.from_dict(d)
+    Characteristics:
+    - Immutable / frozen
+    - Provides `to_dict()` / `from_dict()` compatibility shims
+    - Uses Pydantic's model dump/validation machinery for correctness
     """
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return a shallow dictionary representation of the dataclass.
+    if _PYDANTIC_V2:  # Pydantic v2 configuration
+        model_config = ConfigDict(frozen=True)
+    else:  # Pydantic v1 configuration style
+        class Config:  # type: ignore
+            allow_mutation = False
 
-        Returns:
-            dict: mapping of field name to value.
+    # Canonical fields required by architecture
+    # Use shared utilities for canonical defaults
+    from .identifiers import generate_uuid4
+    from .timestamps import now_iso
+
+    id: Optional[str] = Field(default_factory=generate_uuid4)
+    created_at: Optional[str] = Field(default_factory=now_iso)
+    updated_at: Optional[str] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Return a dict representation using Pydantic's dumping.
+
+        This is a stable API used by existing callers.
         """
-        return asdict(self)
+        if _PYDANTIC_V2:
+            return self.model_dump(exclude_none=True)
+        return self.dict(exclude_none=True)  # type: ignore
 
     @classmethod
     def from_dict(cls: Type[T], data: Dict[str, Any]) -> T:
-        """Create an instance from a dictionary.
+        """Create an instance from a mapping using Pydantic validation.
 
-        Extra keys in ``data`` that do not map to dataclass fields are ignored.
-
-        Args:
-            data: dictionary of values to map to dataclass fields.
-
-        Returns:
-            Instance of the dataclass.
+        Extra keys are rejected by Pydantic by default unless model config allows.
         """
-        field_names = {f.name for f in fields(cls)}
-        filtered = {k: v for k, v in data.items() if k in field_names}
-        return cls(**filtered)  # type: ignore
+        if _PYDANTIC_V2:
+            return cls.model_validate(data)  # type: ignore
+        return cls.parse_obj(data)  # type: ignore
