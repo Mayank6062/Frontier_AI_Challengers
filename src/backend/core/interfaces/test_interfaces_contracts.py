@@ -43,7 +43,6 @@ def test_observability_implementation_smoke() -> None:
     from src.backend.infrastructure.observability import (
         Logger,
         Metrics,
-        TraceHandle,
     )
 
     log = Logger()
@@ -155,7 +154,7 @@ def test_observability_correlation_and_logger_branches() -> None:
     # Logger exercise other levels
     from src.backend.infrastructure.observability.logger import Logger
 
-    l = Logger()
-    l.emit_log("debug", "dbg")
-    l.emit_log("warning", "warn")
-    l.emit_log("critical", "crit")
+    logg = Logger()
+    logg.emit_log("debug", "dbg")
+    logg.emit_log("warning", "warn")
+    logg.emit_log("critical", "crit")
