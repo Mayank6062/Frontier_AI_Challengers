@@ -1,9 +1,8 @@
 """
 Input sanitization helpers.
 """
-from __future__ import annotations
 
-from typing import Final
+from __future__ import annotations
 
 
 def ensure_non_empty_string(value: str) -> str:
@@ -19,4 +18,3 @@ def ensure_non_empty_string(value: str) -> str:
 def sanitize_whitespace(value: str) -> str:
     """Trim and normalize internal whitespace to single spaces."""
     return " ".join(value.split())
-

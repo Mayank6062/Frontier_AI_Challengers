@@ -1,11 +1,11 @@
 """
 Identifier helpers for generating and validating UUIDs.
 """
+
 from __future__ import annotations
 
 import uuid
 from typing import Final
-
 
 UUID_NAMESPACE: Final[str] = "urn:uuid"
 

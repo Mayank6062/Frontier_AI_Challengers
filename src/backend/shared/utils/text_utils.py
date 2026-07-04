@@ -1,12 +1,12 @@
 """
 Text-related utilities used across backend modules.
 """
+
 from __future__ import annotations
 
 import json
 import re
 from typing import Any, Dict
-
 
 _WHITESPACE_RE = re.compile(r"\s+")
 
@@ -29,9 +29,15 @@ def to_json(obj: Dict[str, Any]) -> str:
 
     This provides deterministic key ordering for stable snapshots.
     """
-    return json.dumps(obj, sort_keys=True, separators=(',', ':'))
+    return json.dumps(obj, sort_keys=True, separators=(",", ":"))
 
 
 def from_json(s: str) -> Dict[str, Any]:
-    return json.loads(s)
+    """Parse stable-serialized JSON into a dictionary.
 
+    Raises ValueError when the decoded object is not a mapping.
+    """
+    obj = json.loads(s)
+    if not isinstance(obj, dict):
+        raise ValueError("JSON did not decode to an object")
+    return obj

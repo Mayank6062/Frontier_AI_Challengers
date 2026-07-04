@@ -1,11 +1,11 @@
 """
 Timestamps utilities for consistent UTC handling.
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
 from typing import Final
-
 
 ISO_FORMAT: Final[str] = "%Y-%m-%dT%H:%M:%S.%fZ"
 
@@ -34,4 +34,6 @@ def parse_iso(timestamp: str) -> datetime:
         return dt.replace(tzinfo=timezone.utc)
     except ValueError:
         # Try a more forgiving parse
-        return datetime.fromisoformat(timestamp.replace("Z", "+00:00")).astimezone(timezone.utc)
+        return datetime.fromisoformat(timestamp.replace("Z", "+00:00")).astimezone(
+            timezone.utc
+        )

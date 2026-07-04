@@ -1,6 +1,7 @@
 """
 Hash utilities for small stable hashing needs.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -24,4 +25,3 @@ def stable_hash(*parts: Iterable[str]) -> str:
         else:
             h.update(str(p).encode("utf-8"))
     return h.hexdigest()
-
