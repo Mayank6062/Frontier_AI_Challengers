@@ -7,6 +7,7 @@ to preserve existing callers' expectations (`to_dict`, `from_dict`).
 """
 
 from __future__ import annotations
+
 # pylint: disable=broad-exception-caught
 
 from typing import Any, Dict, Type, TypeVar, Optional

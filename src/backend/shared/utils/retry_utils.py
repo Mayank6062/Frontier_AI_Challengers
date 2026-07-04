@@ -2,6 +2,7 @@
 
 This module provides a tiny retry decorator used by Shared utilities.
 """
+
 # pylint: disable=broad-exception-caught
 
 from __future__ import annotations
