@@ -6,7 +6,7 @@ so coverage and import-time checks validate the contracts.
 
 from __future__ import annotations
 
-from src.backend.core.interfaces import (
+from backend.core.interfaces import (
     agent_interface as agent_interface_mod,
     llm_interface as llm_interface_mod,
     knowledge_interface as knowledge_interface_mod,
@@ -40,7 +40,7 @@ def test_storage_cache_ledger_exports() -> None:
 
 def test_observability_implementation_smoke() -> None:
     # Import the concrete components from the observability package
-    from src.backend.infrastructure.observability import (
+    from backend.infrastructure.observability import (
         Logger,
         Metrics,
     )
@@ -57,7 +57,7 @@ def test_observability_implementation_smoke() -> None:
     assert metrics._metrics.get("test.metric") == 3.14
 
     # tracing returns a context manager via start_trace helper
-    from src.backend.infrastructure.observability import start_trace
+    from backend.infrastructure.observability import start_trace
 
     handle = start_trace("unit-test-trace", {"x": 1})
     with handle:
@@ -66,8 +66,8 @@ def test_observability_implementation_smoke() -> None:
 
 def test_infrastructure_implementations_smoke() -> None:
     # Cache
-    from src.backend.infrastructure.cache.cache_service import CacheService
-    from src.backend.infrastructure.cache.retrieval_cache import RetrievalCache
+    from backend.infrastructure.cache.cache_service import CacheService
+    from backend.infrastructure.cache.retrieval_cache import RetrievalCache
 
     cache = CacheService()
     cache.set("k1", "v1", ttl_seconds=1)
@@ -80,9 +80,9 @@ def test_infrastructure_implementations_smoke() -> None:
     assert val == "computed"
 
     # Storage
-    from src.backend.infrastructure.storage.storage_service import StorageService
-    from src.backend.infrastructure.storage.session_store import SessionStore
-    from src.backend.infrastructure.storage.engagement_store import EngagementStore
+    from backend.infrastructure.storage.storage_service import StorageService
+    from backend.infrastructure.storage.session_store import SessionStore
+    from backend.infrastructure.storage.engagement_store import EngagementStore
 
     storage = StorageService()
     storage.put("s:1", {"x": 1})
@@ -101,14 +101,14 @@ def test_infrastructure_implementations_smoke() -> None:
     assert list(es.list_engagements())
 
     # Secrets
-    from src.backend.infrastructure.secrets.secrets_manager import SecretsManager
+    from backend.infrastructure.secrets.secrets_manager import SecretsManager
 
     sm = SecretsManager({"k": "secret"})
     assert sm.get_secret("k") == "secret"
     assert sm.get_secret("missing") is None
 
     # Decision ledger
-    from src.backend.infrastructure.decision_ledger.ledger_service import (
+    from backend.infrastructure.decision_ledger.ledger_service import (
         LedgerService,
     )
 
@@ -118,16 +118,18 @@ def test_infrastructure_implementations_smoke() -> None:
     assert list(ledger.query())
 
     # Ledger schema dataclass instantiation
-    from src.backend.infrastructure.decision_ledger.ledger_schema import LedgerRecord
+    from backend.infrastructure.decision_ledger.ledger_schema import LedgerRecord
 
-    lr = LedgerRecord(engagement_id="e1", timestamp_iso="2020-01-01T00:00:00Z", payload={"a":1})
+    lr = LedgerRecord(
+        engagement_id="e1", timestamp_iso="2020-01-01T00:00:00Z", payload={"a": 1}
+    )
     assert lr.engagement_id == "e1"
 
     # LLM
-    from src.backend.infrastructure.llm.llm_client import LLMClient
-    from src.backend.infrastructure.llm.anthropic_adapter import AnthropicAdapter
-    from src.backend.infrastructure.llm.openai_adapter import OpenAIAdapter
-    from src.backend.infrastructure.llm.response_parser import parse_response
+    from backend.infrastructure.llm.llm_client import LLMClient
+    from backend.infrastructure.llm.anthropic_adapter import AnthropicAdapter
+    from backend.infrastructure.llm.openai_adapter import OpenAIAdapter
+    from backend.infrastructure.llm.response_parser import parse_response
 
     client = LLMClient()
     resp = client.invoke("hello", "model")
@@ -144,7 +146,7 @@ def test_infrastructure_implementations_smoke() -> None:
 
 def test_observability_correlation_and_logger_branches() -> None:
     # Correlation manager: new_id and validate
-    from src.backend.infrastructure.observability.correlation import CorrelationManager
+    from backend.infrastructure.observability.correlation import CorrelationManager
 
     cid = CorrelationManager.new_id()
     assert CorrelationManager.validate(cid) is True
@@ -152,7 +154,7 @@ def test_observability_correlation_and_logger_branches() -> None:
     assert CorrelationManager.validate("not-a-uuid") is False
 
     # Logger exercise other levels
-    from src.backend.infrastructure.observability.logger import Logger
+    from backend.infrastructure.observability.logger import Logger
 
     logg = Logger()
     logg.emit_log("debug", "dbg")
