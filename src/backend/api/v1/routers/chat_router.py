@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, Request
 
 from ...schemas.chat_schemas import ChatRequest, ChatResponse
 from ...dependencies.service_deps import DIContainer
@@ -15,7 +15,9 @@ def _llm_provider(request: Request) -> LLMInterface:
 
 
 @router.post("/invoke", response_model=ChatResponse)
-def invoke_chat(req: ChatRequest, llm=Depends(_llm_provider)) -> ChatResponse:
+def invoke_chat(
+    req: ChatRequest, llm: LLMInterface = Depends(_llm_provider)
+) -> ChatResponse:
     # Delegates to LLMInterface; keeps no orchestration
     resp = llm.invoke(req.prompt, req.model)
     return ChatResponse(text=resp.text, raw=resp.raw)

@@ -12,8 +12,13 @@ def get_token_manager(request: Request) -> TokenManager:
     secret = provided.secrets.get_secret("jwt_secret")
     if not secret:
         # For safety in production, require a secret be configured
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="jwt_secret not configured")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="jwt_secret not configured",
+        )
     return TokenManager(secret.encode("utf-8"))
+
+
 """
 Authentication-related dependency providers.
 

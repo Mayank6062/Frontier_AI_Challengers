@@ -6,5 +6,5 @@ router = APIRouter()
 
 
 @router.get("/ping")
-def ping() -> dict:
+def ping() -> dict[str, bool]:
     return {"ok": True}

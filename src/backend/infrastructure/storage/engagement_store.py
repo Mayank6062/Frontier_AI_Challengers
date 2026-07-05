@@ -7,11 +7,11 @@ from __future__ import annotations
 
 from typing import Any, Dict, Iterable
 
-from .storage_service import StorageService
+from backend.core.interfaces.storage_interface import StorageInterface
 
 
 class EngagementStore:
-    def __init__(self, storage: StorageService, prefix: str = "engagement:") -> None:
+    def __init__(self, storage: StorageInterface, prefix: str = "engagement:") -> None:
         self._storage = storage
         self._prefix = prefix
 

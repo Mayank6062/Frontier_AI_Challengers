@@ -1,24 +1,25 @@
 from __future__ import annotations
 
 from fastapi.testclient import TestClient
+from typing import Any, Iterable
 
 from backend.api.main import create_app
 
 
 class InMemoryStorage:
     def __init__(self) -> None:
-        self._data: dict[str, dict] = {}
+        self._data: dict[str, dict[str, Any]] = {}
 
-    def put(self, key: str, value: dict) -> None:
+    def put(self, key: str, value: dict[str, Any]) -> None:
         self._data[key] = value
 
-    def get(self, key: str) -> dict | None:
+    def get(self, key: str) -> dict[str, Any] | None:
         return self._data.get(key)
 
     def delete(self, key: str) -> None:
         self._data.pop(key, None)
 
-    def query(self, prefix: str):
+    def query(self, prefix: str) -> Iterable[dict[str, Any]]:
         for k, v in list(self._data.items()):
             if k.startswith(prefix):
                 yield v
@@ -32,10 +33,10 @@ class SimpleSecrets:
 
 
 class SimpleLogger:
-    def info(self, *a, **k):
+    def info(self, *a: Any, **k: Any) -> None:
         return None
 
-    def debug(self, *a, **k):
+    def debug(self, *a: Any, **k: Any) -> None:
         return None
 
 
@@ -54,13 +55,13 @@ class Provided:
 
 def setup_test_client() -> TestClient:
     app = create_app()
+    # Attach a lightweight Provided stub directly to the FastAPI app instance
+    app.state.di_provided = Provided()
     client = TestClient(app)
-    # Override DI container after startup with lightweight Provided stub
-    client.app.state.di_provided = Provided()
     return client
 
 
-def test_health_and_version():
+def test_health_and_version() -> None:
     client = setup_test_client()
     r = client.get("/healthz")
     assert r.status_code == 200 and r.json().get("status") == "ok"
@@ -68,7 +69,7 @@ def test_health_and_version():
     assert r.status_code == 200 and "version" in r.json()
 
 
-def test_create_session_and_get():
+def test_create_session_and_get() -> None:
     client = setup_test_client()
     payload = {"user_id": "user-1"}
     r = client.post("/v1/sessions/", json=payload)
@@ -82,17 +83,17 @@ def test_create_session_and_get():
     assert r.json()["id"] == sess_id
 
 
-def test_create_engagement():
+def test_create_engagement() -> None:
     client = setup_test_client()
     payload = {"title": "TestEng", "description": "desc"}
     r = client.post("/v1/engagements/", json=payload)
-    print('RESPONSE:', r.status_code, r.text)
+    print("RESPONSE:", r.status_code, r.text)
     assert r.status_code == 201
     data = r.json()
     assert data["title"] == "TestEng"
 
 
-def test_issue_token():
+def test_issue_token() -> None:
     client = setup_test_client()
     r = client.post("/v1/auth/token", json={"username": "alice"})
     assert r.status_code == 200

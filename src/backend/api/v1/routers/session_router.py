@@ -1,16 +1,18 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from ...schemas.session_schemas import SessionCreateRequest, SessionResponse
 from ...dependencies.session_deps import get_session_manager
-from backend.core.session.session_manager import SessionValidationError
+from backend.core.session.session_manager import SessionValidationError, SessionManager
 
 router = APIRouter()
 
 
 @router.post("/", response_model=SessionResponse, status_code=status.HTTP_201_CREATED)
-def create_session(req: SessionCreateRequest, mgr=Depends(get_session_manager)) -> SessionResponse:
+def create_session(
+    req: SessionCreateRequest, mgr: "SessionManager" = Depends(get_session_manager)
+) -> SessionResponse:
     try:
         s = mgr.create_session(req.user_id, ttl_seconds=req.ttl_seconds, data=req.data)
         return SessionResponse.from_orm(s)
@@ -19,7 +21,9 @@ def create_session(req: SessionCreateRequest, mgr=Depends(get_session_manager)) 
 
 
 @router.get("/{session_id}", response_model=SessionResponse)
-def get_session(session_id: str, mgr=Depends(get_session_manager)) -> SessionResponse:
+def get_session(
+    session_id: str, mgr: "SessionManager" = Depends(get_session_manager)
+) -> SessionResponse:
     try:
         s = mgr.get_session(session_id)
         return SessionResponse.from_orm(s)

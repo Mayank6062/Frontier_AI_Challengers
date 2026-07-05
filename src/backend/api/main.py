@@ -39,7 +39,9 @@ def create_app() -> FastAPI:
         engagement_router.router, prefix="/v1/engagements", tags=["engagements"]
     )
     app.include_router(chat_router.router, prefix="/v1/chat", tags=["chat"])
-    app.include_router(workspace_router.router, prefix="/v1/workspace", tags=["workspace"])
+    app.include_router(
+        workspace_router.router, prefix="/v1/workspace", tags=["workspace"]
+    )
     app.include_router(output_router.router, prefix="/v1/output", tags=["output"])
 
     # Register middleware and exception handlers from package
@@ -56,8 +58,12 @@ def create_app() -> FastAPI:
     app.add_middleware(auth_middleware.AuthenticationMiddleware)
     app.add_middleware(rate_limit_middleware.RateLimitMiddleware)
 
+    from starlette.requests import Request
+
     @app.exception_handler(Exception)
-    async def _global_exception_handler(request, exc):
+    async def _global_exception_handler(
+        request: Request, exc: Exception
+    ) -> JSONResponse:
         return await error_handler_middleware.global_exception_handler(request, exc)
 
     @app.on_event("startup")
