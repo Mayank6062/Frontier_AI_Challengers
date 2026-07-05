@@ -1,3 +1,6 @@
+# Security Validation
+
+Threat modeling, control mapping, and finding classification helpers for the security validation agent.
 # Security Agent
 
 Repository skeleton.

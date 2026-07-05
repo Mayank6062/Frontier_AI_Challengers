@@ -1,3 +1,6 @@
+# Documentation
+
+Generators for HLD, LLD, summaries, risk registers, assumptions logs, and diagrams.
 # Documentation Agent
 
 Repository skeleton.

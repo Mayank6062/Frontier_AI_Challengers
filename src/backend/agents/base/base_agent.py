@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import time
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, List
 
 from ...core.interfaces.agent_interface import AgentInterface
+from ...core.interfaces.knowledge_interface import KnowledgeInterface
 from .agent_context import AgentContext
 from .agent_result import AgentResult
 from ...core.interfaces.observability_interface import ObservabilityInterface
@@ -23,19 +24,63 @@ class BaseAgent(AgentInterface, ABC):
     AGENT_CATEGORY = None
     AGENT_NAME: str = "BaseAgent"
 
+    REQUIRED_CONTEXT_KEYS: List[str] = []
+
     def __init__(
         self,
         observability: Optional[ObservabilityInterface] = None,
         validator: Optional[AgentValidator] = None,
+        knowledge: Optional[KnowledgeInterface] = None,
     ) -> None:
         self._observability = observability
         self._validator = validator
+        # Constructor-injected KnowledgeInterface implementation (required for compliance)
+        self._knowledge = knowledge
 
     async def execute(self, context: AgentContext) -> AgentResult:
         start = time.perf_counter()
         trace_id = context.correlation_id or context.execution_id
+
+        # Lifecycle: before_execute -> input validation -> knowledge resolution -> execute_impl -> output validation
         try:
             await self.before_execute(context)
+
+            # Input validation: ensure required metadata keys exist
+            # Ensure metadata object exists at all (global agent context validation)
+            if context.metadata is None:
+                result = AgentResult.validation_error(
+                    errors=["missing_metadata"], agent_name=self.AGENT_NAME, trace_id=trace_id
+                )
+                await self.on_exception(context, Exception("missing_metadata"), result)
+                await self.cleanup(context)
+                return result
+
+            invalid_reasons: List[str] = []
+            for k in self.REQUIRED_CONTEXT_KEYS:
+                if not context.metadata or k not in context.metadata:
+                    invalid_reasons.append(f"missing_context_metadata:{k}")
+            if invalid_reasons:
+                result = AgentResult.validation_error(
+                    errors=invalid_reasons, agent_name=self.AGENT_NAME, trace_id=trace_id
+                )
+                await self.on_exception(context, Exception("input_validation_failed"), result)
+                await self.cleanup(context)
+                return result
+
+            # Knowledge resolution: require KnowledgeInterface via constructor injection
+            if self._knowledge is None:
+                result = AgentResult.validation_error(
+                    errors=["missing_knowledge_interface"],
+                    agent_name=self.AGENT_NAME,
+                    trace_id=trace_id,
+                )
+                await self.on_exception(context, Exception("missing_knowledge_interface"), result)
+                await self.cleanup(context)
+                return result
+
+            # Allow agents to optionally perform asynchronous pre-execution knowledge fetch
+            await self._resolve_knowledge(context)
+
             result = await self.execute_impl(context)
             await self.after_execute(context, result)
         except Exception as exc:  # noqa: BLE001 - convert to AgentResult
@@ -94,6 +139,24 @@ class BaseAgent(AgentInterface, ABC):
                 # validator failures should not break execution
                 pass
 
+        # Citation enforcement: absence of citations on success is a hard failure
+        try:
+            if result.success and (not result.citations or len(result.citations) == 0):
+                result = AgentResult.validation_error(
+                    errors=["missing_citations"], agent_name=self.AGENT_NAME, trace_id=trace_id
+                )
+        except Exception:
+            pass
+
+        # Confidence validation: successful results must include a confidence score
+        try:
+            if result.success and (result.confidence is None):
+                result = AgentResult.validation_error(
+                    errors=["missing_confidence"], agent_name=self.AGENT_NAME, trace_id=trace_id
+                )
+        except Exception:
+            pass
+
         await self.cleanup(context)
         return result
 
@@ -104,6 +167,15 @@ class BaseAgent(AgentInterface, ABC):
                 "before_execute",
                 {"agent": self.AGENT_NAME, "execution_id": context.execution_id},
             )
+
+    async def _resolve_knowledge(self, context: AgentContext) -> None:
+        """Hook to allow agents to perform knowledge retrieval prior to LLM invocation.
+
+        Agents should not call knowledge directly outside this lifecycle hook. Implementations
+        may store retrieved items in `context.runtime_vars` if needed.
+        """
+        # Default: no-op. Agents may override this method if they need prefetching.
+        return None
 
     @abstractmethod
     async def execute_impl(self, context: AgentContext) -> AgentResult:

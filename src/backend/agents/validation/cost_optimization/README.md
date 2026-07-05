@@ -1,3 +1,6 @@
+# Cost Optimization
+
+Helpers for TCO modeling, cost estimation, and optimization advice.
 # Cost Optimization Agent
 
 Repository skeleton.

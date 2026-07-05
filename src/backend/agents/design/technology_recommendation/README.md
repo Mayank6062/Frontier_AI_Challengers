@@ -1,3 +1,6 @@
+# Technology Recommendation
+
+Agent and helpers for recommending technologies. Uses deterministic scoring and catalog lookup.
 # Technology Recommendation Agent
 
 Repository skeleton.

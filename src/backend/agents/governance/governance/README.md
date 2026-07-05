@@ -1,3 +1,6 @@
+# Governance
+
+Policy enforcement and guardrail checking helpers.
 # Governance Agent
 
 Repository skeleton.

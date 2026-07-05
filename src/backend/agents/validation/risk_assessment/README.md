@@ -1,3 +1,6 @@
+# Risk Assessment
+
+Risk aggregation, scoring, and mitigation recommendation helpers.
 # Risk Assessment Agent
 
 Repository skeleton.

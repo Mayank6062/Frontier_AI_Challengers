@@ -12,6 +12,7 @@ from .ambiguity_detector import detect_ambiguities
 class RequirementIntelligenceAgent(BaseAgent):
     AGENT_ID = "requirement_intelligence"
     AGENT_NAME = "Requirement Intelligence"
+    REQUIRED_CONTEXT_KEYS = ["text"]
 
     async def execute_impl(self, context: AgentContext) -> AgentResult:
         text = context.metadata.get("text", "") if context.metadata else ""
@@ -22,7 +23,9 @@ class RequirementIntelligenceAgent(BaseAgent):
             "requirements_count": len(classified),
             "ambiguities": ambiguities,
         }
-        return AgentResult.success_result(payload=payload)
+        # attach a provenance citation and a conservative confidence estimate
+        citations = ["knowledge:requirements#v1"]
+        return AgentResult.success_result(payload=payload, confidence=0.65, citations=citations)
 
 
 # register with the AgentRegistry
