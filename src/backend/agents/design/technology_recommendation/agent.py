@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 
+from typing import Optional, Any
+
 from ...base.base_agent import BaseAgent
 from ...base.agent_context import AgentContext
 from ...base.agent_result import AgentResult
 from ...base.agent_registry import AgentRegistry
+from backend.core.interfaces.knowledge_interface import KnowledgeInterface
 
 from .scorer import score_technologies
 from .build_vs_buy import analyze_build_vs_buy
@@ -15,8 +18,15 @@ class TechnologyRecommendationAgent(BaseAgent):
     AGENT_NAME = "Technology Recommendation"
     REQUIRED_CONTEXT_KEYS = ["domain"]
 
-    def __init__(self, observability=None, validator=None, knowledge=None) -> None:
-        super().__init__(observability=observability, validator=validator, knowledge=knowledge)
+    def __init__(
+        self,
+        observability: Optional[Any] = None,
+        validator: Optional[Any] = None,
+        knowledge: Optional[KnowledgeInterface] = None,
+    ) -> None:
+        super().__init__(
+            observability=observability, validator=validator, knowledge=knowledge
+        )
 
     async def _resolve_knowledge(self, context: AgentContext) -> None:
         domain = context.metadata.get("domain") if context.metadata else ""
@@ -24,19 +34,19 @@ class TechnologyRecommendationAgent(BaseAgent):
         context.runtime_vars["retrieved_knowledge"] = rc
 
     async def execute_impl(self, context: AgentContext) -> AgentResult:
-        domain = context.metadata.get("domain") if context.metadata else None
         try:
             # Use prefetched knowledge retrieved in _resolve_knowledge
-            rc = context.runtime_vars.get("retrieved_knowledge")
+            rc = context.runtime_vars.get("retrieved_knowledge") or None
+            items = getattr(rc, "items", []) or []
             candidates = [
                 {
-                    "name": i.title,
-                    "entry_id": i.entry_id,
-                    "citation": i.entry_id,
-                    "maturity": i.relevance,
-                    "fit": i.relevance,
+                    "name": getattr(i, "title", None),
+                    "entry_id": getattr(i, "entry_id", None),
+                    "citation": getattr(i, "entry_id", None),
+                    "maturity": getattr(i, "relevance", None),
+                    "fit": getattr(i, "relevance", None),
                 }
-                for i in rc.items
+                for i in items
             ]
             scored = score_technologies(candidates)
             decision = analyze_build_vs_buy(scored)

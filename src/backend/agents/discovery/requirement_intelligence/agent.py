@@ -25,7 +25,9 @@ class RequirementIntelligenceAgent(BaseAgent):
         }
         # attach a provenance citation and a conservative confidence estimate
         citations = ["knowledge:requirements#v1"]
-        return AgentResult.success_result(payload=payload, confidence=0.65, citations=citations)
+        return AgentResult.success_result(
+            payload=payload, confidence=0.65, citations=citations
+        )
 
 
 # register with the AgentRegistry
