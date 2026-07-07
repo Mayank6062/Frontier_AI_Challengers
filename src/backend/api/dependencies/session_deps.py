@@ -11,7 +11,7 @@ from backend.core.interfaces.storage_interface import StorageInterface
 
 def get_session_manager(request: Request) -> SessionManager:
     provided: DIContainer.Provided = request.app.state.di_provided
-    repo = SessionRepository(cast(StorageInterface, provided.session_store))
+    repo = SessionRepository(cast(StorageInterface, provided.storage))
     return SessionManager(repo)
 
 

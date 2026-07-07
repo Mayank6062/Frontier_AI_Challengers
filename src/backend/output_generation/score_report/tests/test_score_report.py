@@ -1,18 +1,18 @@
 import asyncio
 from datetime import datetime, UTC
 
-from src.backend.output_generation.architecture_score.models import (
+from ...architecture_score.models import (
     ArchitectureScore,
     ArchitectureScoreMetadata,
     ScoreCategory,
     ScoreDimension,
 )
-from src.backend.output_generation.architecture_score.enums import (
+from ...architecture_score.enums import (
     ScoreGrade,
     ScoreHealthStatus,
     ScoreSchemaVersion,
 )
-from src.backend.output_generation.score_report.score_report_generator import ScoreReportGenerator
+from ..score_report_generator import ScoreReportGenerator
 
 
 def test_score_report_generator_renders_all_outputs() -> None:

@@ -1,0 +1,19 @@
+version: 1
+disable_existing_loggers: false
+formatters:
+  structured:
+    format: "%(asctime)s %(levelname)s %(name)s trace_id=%(trace_id)s stage=%(stage)s message=%(message)s"
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: structured
+    stream: ext://sys.stdout
+loggers:
+  output_generation:
+    handlers: [console]
+    level: INFO
+    propagate: false
+root:
+  level: INFO
+  handlers: [console]

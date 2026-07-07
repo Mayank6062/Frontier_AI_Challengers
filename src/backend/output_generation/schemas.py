@@ -6,12 +6,11 @@ the pipeline. They are used across the factory, service, and manifest layers.
 
 from __future__ import annotations
 
-from enum import Enum
-from typing import List, Optional, Dict
-from pydantic import BaseModel, Field
-from ..manifest.schemas import ManifestFileEntry
 from datetime import datetime
-from ..manifest.schemas import BundleProvenance
+from enum import Enum
+from typing import Dict, List, Optional
+
+from pydantic import BaseModel, Field
 
 
 class GenerationStatus(str, Enum):
@@ -83,6 +82,11 @@ class GenerationResult(BaseModel):
     bundle_reference: Optional[str] = None
 
 
+# Re-export canonical models from bundle subpackage for convenience
+from .bundle.schemas import BundleManifest as BundleManifestModel  # noqa: E402
+from .bundle.schemas import BundleAssemblyRequest, BundleAssemblyResult  # noqa: E402
+
+
 __all__ = [
     "GenerationRequest",
     "GenerationResult",
@@ -94,35 +98,6 @@ __all__ = [
     "FormatGenerationResult",
     "GenerationSummary",
     "GenerationError",
-]
-from __future__ import annotations
-
-# Re-export core contracts
-from .contracts import (
-    BundleGenerationRequest,
-    BundleGenerationResponse,
-    GenerationResult,
-    BundleGenerationStatus,
-    GenerationMetrics,
-)
-
-# Re-export bundle manifest model from the bundle subpackage
-from .bundle.schemas import BundleManifest as BundleManifestModel
-from .bundle.schemas import BundleAssemblyRequest, BundleAssemblyResult
-
-"""Schema re-exports and lightweight adapters used across output_generation.
-
-These intentionally reuse canonical models defined elsewhere in the package to
-avoid duplication. Import here to provide a single import surface for
-consumers created in Phase 1.
-"""
-
-__all__ = [
-    "BundleGenerationRequest",
-    "BundleGenerationResponse",
-    "GenerationResult",
-    "BundleGenerationStatus",
-    "GenerationMetrics",
     "BundleManifestModel",
     "BundleAssemblyRequest",
     "BundleAssemblyResult",

@@ -1,8 +1,7 @@
 """Main OutputGeneratorService orchestrator implementing Chapter 18 pipeline.
 
-This service orchestrates the complete pipeline in the canonical order and
-emits a GenerationResult. It relies on a configured OutputGeneratorFactory,
-manifest builder, bundle assembler and quality orchestrator provided via DI.
+This service is the main orchestration point for the output generation pipeline,
+delegating to bundle assembler, storage, and supporting quality/manifest builders.
 """
 
 from __future__ import annotations
@@ -10,10 +9,19 @@ from __future__ import annotations
 import asyncio
 from typing import List
 from datetime import datetime
+from uuid import uuid4
 
 from .factory import OutputGeneratorFactory
-from .schemas import GenerationContext, FormatGenerationResult, GenerationResult, GenerationSummary, GenerationStatus, OutputArtifact
-from .exceptions import OrchestrationError, GenerationError
+from .schemas import GenerationContext, FormatGenerationResult, GenerationResult, GenerationSummary, GenerationStatus as SchemaGenerationStatus, OutputArtifact
+from .exceptions import OrchestrationError, GenerationError, StorageError, ValidationError
+from .contracts import (
+    BundleGenerationRequest,
+    BundleGenerationResponse,
+    GenerationMetrics,
+    BundleGenerationStatus,
+)
+from .bundle.schemas import BundleManifest, BundleAssemblyRequest
+from .enums import BundleStatus, GenerationStatus
 
 
 class OutputGeneratorService:
@@ -50,7 +58,6 @@ class OutputGeneratorService:
         self.bundle_assembler = bundle_assembler
 
     async def generate(self, context: GenerationContext) -> GenerationResult:
-        started = datetime.utcnow()
         artifacts: List[OutputArtifact] = []
         stage_results: dict = {}
 
@@ -63,17 +70,17 @@ class OutputGeneratorService:
                 raise OrchestrationError(f"missing generator for stage: {stage}")
 
             # call generate (async) and merge artifacts
-            result: FormatGenerationResult = await gen.generate(context)
-            stage_results[stage] = result
-            for a in result.artifacts:
+            stage_result: FormatGenerationResult = await gen.generate(context)
+            stage_results[stage] = stage_result
+            for a in stage_result.artifacts:
                 artifacts.append(a)
 
             # If the generator produced errors and it's not optional -> stop
-            if result.errors and not gen.is_optional():
-                raise GenerationError(f"generator {stage} failed", details={"errors": result.errors})
+            if stage_result.errors and not gen.is_optional():
+                raise GenerationError(f"generator {stage} failed", details={"errors": stage_result.errors})
 
         # After all stages completed, build summary
-        status = GenerationStatus.SUCCEEDED
+        status = SchemaGenerationStatus.SUCCEEDED
         errors = []
         warnings = []
         for r in stage_results.values():
@@ -83,38 +90,18 @@ class OutputGeneratorService:
                 warnings.extend(r.warnings)
 
         if errors:
-            status = GenerationStatus.PARTIAL
+            status = SchemaGenerationStatus.PARTIAL
 
         summary = GenerationSummary(
             request_id=context.request_id,
             status=status,
             artifacts_count=len(artifacts),
-            errors=[],
+            errors=errors,
             warnings=warnings,
         )
 
         result = GenerationResult(summary=summary, artifacts=artifacts)
         return result
-
-
-__all__ = ["OutputGeneratorService"]
-from __future__ import annotations
-
-import asyncio
-from uuid import uuid4
-from datetime import datetime
-
-from .contracts import (
-    BundleGenerationRequest,
-    BundleGenerationResponse,
-    GenerationResult,
-    GenerationMetrics,
-    BundleGenerationStatus,
-    GenerationStatus,
-)
-from .bundle.schemas import BundleManifest, BundleAssemblyRequest
-from .exceptions import StorageError, GenerationError, ValidationError
-from .enums import BundleStatus
 
 
 class OutputGeneratorServiceImpl:
@@ -150,6 +137,11 @@ class OutputGeneratorServiceImpl:
                 pass
 
     def generate_bundle(self, request: BundleGenerationRequest) -> BundleGenerationResponse:
+        """Generate a bundle from an approved snapshot reference.
+
+        This method handles bundle assembly workflow including manifest validation,
+        snapshot retrieval, persona filtering, and storage.
+        """
         # Basic validations
         if not request.approved_snapshot_reference:
             raise ValidationError("approved_snapshot_reference is required")
@@ -165,15 +157,15 @@ class OutputGeneratorServiceImpl:
             raise StorageError("failed to retrieve approved snapshot", details={"cause": str(exc)})
 
         if snapshot is None:
-            # Build a formal error response
-            result = GenerationResult()
+            # Build a formal error response using contracts.GenerationResult
+            from .contracts import GenerationResult as ContractGenerationResult
+            result = ContractGenerationResult()
+            bundle_uuid = uuid4()
             result.status = GenerationStatus.FAILED
-            result.partial = None
-            result.provenance = {"reason": "snapshot_not_found"}
+            result.bundle_id = bundle_uuid
 
-            status = BundleGenerationStatus(bundle_id=result.bundle_id, status=BundleStatus.FAILED, started_at=datetime.utcnow())
-            # Fabricate a response consistent with contracts
-            response = BundleGenerationResponse(request_id=result.bundle_id, result=result, status=status)
+            status = BundleGenerationStatus(bundle_id=bundle_uuid, status=BundleStatus.FAILED, started_at=datetime.utcnow())
+            response = BundleGenerationResponse(request_id=bundle_uuid, result=result, status=status)
             return response
 
         # Convert snapshot dict to BundleManifest (bundle package canonical model)
@@ -220,17 +212,20 @@ class OutputGeneratorServiceImpl:
         except Exception as exc:
             raise GenerationError("bundle assembly failed", details={"cause": str(exc)})
 
-        # Map BundleAssemblyResult → GenerationResult
-        gen_result = GenerationResult()
-        gen_result.bundle_id = res.bundle_id
+        # Map BundleAssemblyResult → GenerationResult using contracts.GenerationResult
+        from .contracts import GenerationResult as ContractGenerationResult
+        gen_result = ContractGenerationResult()
+        bundle_uuid = getattr(res, "bundle_id", uuid4())
+        if isinstance(bundle_uuid, str):
+            from uuid import UUID
+            bundle_uuid = UUID(bundle_uuid)
+        gen_result.bundle_id = bundle_uuid
         gen_result.status = GenerationStatus.SUCCEEDED if getattr(res, "generation_errors", None) == [] else GenerationStatus.PARTIAL
-        gen_result.artifacts = []
         gen_result.metrics = GenerationMetrics(elapsed_seconds=getattr(res, "total_duration_seconds", 0.0))
 
-        status = BundleGenerationStatus(bundle_id=gen_result.bundle_id, status=BundleStatus.COMPLETED, started_at=datetime.utcnow())
-
-        response = BundleGenerationResponse(request_id=gen_result.bundle_id, result=gen_result, status=status)
+        status = BundleGenerationStatus(bundle_id=bundle_uuid, status=BundleStatus.COMPLETED, started_at=datetime.utcnow())
+        response = BundleGenerationResponse(request_id=bundle_uuid, result=gen_result, status=status)
         return response
 
 
-__all__ = ["OutputGeneratorServiceImpl"]
+__all__ = ["OutputGeneratorService", "OutputGeneratorServiceImpl"]

@@ -100,7 +100,7 @@ class BundleAssembler:
             if src_bytes is not None:
                 dest_path.write_bytes(src_bytes)
             else:
-                # create empty placeholder
+                # Write empty placeholder if content not available
                 dest_path.write_text("")
 
         # compute composite hash from manifest.files data and update manifest
@@ -132,7 +132,9 @@ class BundleAssembler:
         persona_paths = {}
         for persona in manifest.personas:
             persona_out = bundle_root / f"persona_{persona}"
-            persona_res = self.persona_filter.filter(manifest, persona, str(bundle_root), str(persona_out))
+            # Apply persona filter to create persona-specific bundle
+            # PersonaFilter.filter is synchronous; call directly and capture result
+            _persona_result = self.persona_filter.filter(manifest, persona, str(bundle_root), str(persona_out))
             persona_archive = str(persona_out.with_suffix(".zip"))
             ArchiveBuilder.create_zip(str(persona_out), persona_archive, compress=request.compress_on_download)
             stored = await self.storage.write(persona_archive, Path(persona_archive).name)

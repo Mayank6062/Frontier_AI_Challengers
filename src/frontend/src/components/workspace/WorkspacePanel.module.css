@@ -1,0 +1,22 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--color-surface-default);
+}
+
+.section {
+  padding: var(--spacing-lg);
+}
+
+.section h3 {
+  margin: 0 0 var(--spacing-md) 0;
+  font-size: var(--text-size-lg);
+  font-weight: var(--text-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.section p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}

@@ -1,4 +1,3 @@
-from pathlib import Path
 from src.backend.output_generation.portal.token_embedder import embed_theme_into_html, get_css_for_theme
 
 

@@ -51,5 +51,19 @@ class SessionManager:
         self._repo.save(new)
         return new
 
+    def list_sessions(self, user_id: str) -> list[Session]:
+        """List all sessions for a specific user."""
+        if not user_id or not user_id.strip():
+            raise SessionValidationError("user_id required")
+        # Filter out expired sessions and collect valid ones
+        sessions = []
+        for s in self._repo.list_by_user(user_id):
+            if not s.is_expired():
+                sessions.append(s)
+            else:
+                # Clean up expired sessions
+                self._repo.delete(s.id)
+        return sessions
+
     def invalidate(self, session_id: str) -> None:
         self._repo.delete(session_id)

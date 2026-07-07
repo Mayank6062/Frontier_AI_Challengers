@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from src.backend.output_generation.export import (
+from .. import (
     BaseExporter,
     DocxExporter,
     DrawIoExporter,

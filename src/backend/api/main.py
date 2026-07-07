@@ -33,16 +33,16 @@ def create_app() -> FastAPI:
     )
 
     # Register routers
-    app.include_router(auth_router.router, prefix="/v1/auth", tags=["auth"])
-    app.include_router(session_router.router, prefix="/v1/sessions", tags=["sessions"])
+    app.include_router(auth_router.router, prefix="/api/v1/auth", tags=["auth"])
+    app.include_router(session_router.router, prefix="/api/v1/sessions", tags=["sessions"])
     app.include_router(
-        engagement_router.router, prefix="/v1/engagements", tags=["engagements"]
+        engagement_router.router, prefix="/api/v1/engagements", tags=["engagements"]
     )
-    app.include_router(chat_router.router, prefix="/v1/chat", tags=["chat"])
+    app.include_router(chat_router.router, prefix="/api/v1/chat", tags=["chat"])
     app.include_router(
-        workspace_router.router, prefix="/v1/workspace", tags=["workspace"]
+        workspace_router.router, prefix="/api/v1/workspace", tags=["workspace"]
     )
-    app.include_router(output_router.router, prefix="/v1/output", tags=["output"])
+    app.include_router(output_router.router, prefix="/api/v1/output", tags=["output"])
 
     # Register middleware and exception handlers from package
     from .middleware import (
@@ -69,7 +69,11 @@ def create_app() -> FastAPI:
     @app.on_event("startup")
     async def _startup_event() -> None:
         # Build DI container once and attach to app.state for dependency providers
-        di = service_deps.DIContainer(secrets_initial=None)
+        # For E2E testing, initialize with a default JWT secret
+        default_secrets = {
+            "jwt_secret": "dev-secret-key-for-e2e-testing"  # ONLY for testing, not for production
+        }
+        di = service_deps.DIContainer(secrets_initial=default_secrets)
         app.state.di_provided = di.build()
 
     @app.on_event("shutdown")

@@ -5,12 +5,24 @@ from pydantic import BaseModel
 
 
 class ChatRequest(BaseModel):
-    prompt: str
-    model: str = "default"
-    max_tokens: Optional[int] = None
-    temperature: Optional[float] = None
+    content: str
+    attachments: Optional[list[str]] = None
+
+
+class ChatMessage(BaseModel):
+    id: str
+    session_id: str
+    role: str  # 'user' | 'assistant'
+    content: str
+    timestamp: str
+    metadata: Optional[Dict[str, Any]] = None
 
 
 class ChatResponse(BaseModel):
+    message: ChatMessage
+
+
+class ChatResponseLegacy(BaseModel):
+    """Legacy response for /invoke endpoint."""
     text: str
     raw: Optional[Dict[str, Any]] = None

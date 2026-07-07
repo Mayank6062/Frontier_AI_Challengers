@@ -47,8 +47,13 @@ class AgentScheduler:
         async def run_agent() -> StageResult:
             try:
                 # build a minimal AgentContext from WorkflowContext
+                # Normalize metadata: copy user_message to text for agents that need it
+                metadata = dict(ctx.input_payload) if ctx.input_payload else {}
+                if "user_message" in metadata and "text" not in metadata:
+                    metadata["text"] = metadata["user_message"]
+                
                 agent_ctx = AgentContext(
-                    engagement_id=ctx.engagement_id, metadata=ctx.input_payload
+                    engagement_id=ctx.engagement_id, metadata=metadata
                 )
                 result = await agent.execute(agent_ctx)
 

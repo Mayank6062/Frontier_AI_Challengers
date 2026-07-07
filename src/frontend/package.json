@@ -1,36 +1,59 @@
 {
   "name": "frontier-ai-challengers-frontend",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "test": "jest --passWithNoTests --runInBand",
-    "lint": "node ../../.eslintrules/check-no-hardcoded.js"
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-router-dom": "^6.20.0",
+    "zustand": "^4.4.1",
+    "axios": "^1.6.2"
   },
   "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.7",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^14.0.0",
+    "@types/jest": "^29.5.2",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "@vitejs/plugin-react": "^4.2.1",
     "@babel/preset-react": "^7.29.7",
     "@babel/preset-typescript": "^7.29.7",
     "@storybook/addon-a11y": "7.6.24",
     "@storybook/addon-essentials": "7.6.24",
+    "@storybook/addon-interactions": "7.6.24",
     "@storybook/builder-webpack5": "7.6.24",
     "@storybook/react": "7.6.24",
     "@storybook/react-webpack5": "7.6.24",
     "storybook": "7.6.24",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^14.0.0",
-    "@types/jest": "^29.5.2",
-    "@types/react": "^18.2.21",
-    "@types/react-dom": "^18.2.7",
     "axe-core": "^4.7.0",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.1.0",
     "jest": "^29.6.0",
     "jest-environment-jsdom": "^29.6.0",
     "ts-jest": "^29.1.0",
-    "typescript": "^5.2.2"
-  },
-  "dependencies": {
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "typescript": "^5.2.2",
+    "vite": "^5.0.6",
+    "vitest": "^1.1.0"
   }
 }

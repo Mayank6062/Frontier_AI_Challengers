@@ -17,4 +17,13 @@ class SessionResponse(BaseModel):
     last_accessed: Optional[str]
     expires_at: Optional[str]
     data: Optional[dict[str, Any]]
+    status: Optional[str] = "active"
+    name: Optional[str] = None
     model_config = {"from_attributes": True}
+
+
+class SessionListResponse(BaseModel):
+    sessions: list[SessionResponse]
+    total: int
+    limit: int
+    offset: int

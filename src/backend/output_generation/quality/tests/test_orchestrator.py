@@ -1,7 +1,7 @@
 import asyncio
 
-from src.backend.output_generation.quality.enums import ValidationSeverity
-from src.backend.output_generation.quality.orchestrator import QualityGateOrchestrator
+from ..enums import ValidationSeverity
+from ..orchestrator import QualityGateOrchestrator
 
 
 def test_validate_bundle_returns_report_and_verdict() -> None:
