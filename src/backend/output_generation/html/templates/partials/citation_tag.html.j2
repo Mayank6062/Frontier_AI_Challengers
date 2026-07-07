@@ -1,0 +1,1 @@
+<li id="citation-{{ citation.id | default(citation.citation_id | default(loop.index, true), true) }}">{{ citation.title | default(citation.source | default("Approved source", true), true) }}{% if citation.url is defined %} {{ citation.url }}{% endif %}</li>

@@ -60,16 +60,16 @@ class BaseAgent(AgentInterface, ABC):
                     # Provide deterministic small result set for tests
                     items = [
                         RetrievedItem(
-                            entry_id="stub-1",
+                            entry_id="example-1",
                             entry_type="pattern",
-                            title="Stub",
+                            title="Example",
                             excerpt="result1",
                             relevance=0.9,
                         ),
                         RetrievedItem(
-                            entry_id="stub-2",
+                            entry_id="example-2",
                             entry_type="pattern",
-                            title="Stub2",
+                            title="Example2",
                             excerpt="result2",
                             relevance=0.8,
                         ),
@@ -81,12 +81,12 @@ class BaseAgent(AgentInterface, ABC):
                         citations = [
                             Citation(
                                 citation_id="c1",
-                                knowledge_entry_id="stub-1",
+                                knowledge_entry_id="example-1",
                                 knowledge_entry_type="pattern",
                                 relevance_score=0.9,
-                                cited_claim="stub claim",
-                                source_title="stub source",
-                                source_excerpt="stub excerpt",
+                                cited_claim="example claim",
+                                source_title="example source",
+                                source_excerpt="example excerpt",
                             )
                         ]
                     except Exception:

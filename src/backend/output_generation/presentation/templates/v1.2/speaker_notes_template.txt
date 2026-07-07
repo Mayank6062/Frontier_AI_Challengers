@@ -1,0 +1,7 @@
+Talking Points:
+{talking_points}
+
+Timing: {timing_seconds}s
+
+Presenter Tips:
+{presenter_tips}

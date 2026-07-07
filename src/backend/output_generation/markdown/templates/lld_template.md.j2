@@ -1,0 +1,26 @@
+# {{ snapshot.title | default("Low-Level Design", true) }}
+
+{% include "partials/table_of_contents.md.j2" %}
+
+## Components
+{% for component in snapshot.components | default([], true) %}
+- **{{ component.name | default("Component", true) }}**: {{ component.description | default("No description supplied.", true) }}
+{% else %}
+- Component details are derived from the approved architecture snapshot.
+{% endfor %}
+
+## Interfaces
+{% for interface in snapshot.interfaces | default([], true) %}
+- **{{ interface.name | default("Interface", true) }}**: {{ interface.contract | default(interface.description | default("Contract captured in approved snapshot.", true), true) }}
+{% else %}
+- Interface contracts are captured in the approved architecture snapshot.
+{% endfor %}
+
+## Data Contracts
+{% for contract in snapshot.data_contracts | default([], true) %}
+- **{{ contract.name | default("Data contract", true) }}**: {{ contract.description | default("Schema details captured in approved snapshot.", true) }}
+{% else %}
+- Data contracts are governed by the approved architecture snapshot.
+{% endfor %}
+
+{% include "section_templates/citations.md.j2" %}

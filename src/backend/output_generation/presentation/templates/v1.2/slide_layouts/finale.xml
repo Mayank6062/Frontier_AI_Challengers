@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout id="finale">
+  <placeholders>
+    <heading x="0.5" y="0.5" width="9" height="0.8"/>
+    <body x="0.5" y="1.5" width="9" height="4.5"/>
+  </placeholders>
+</layout>

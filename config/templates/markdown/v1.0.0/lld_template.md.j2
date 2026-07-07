@@ -1,0 +1,9 @@
+## Low-Level Design
+
+Generated from approved snapshot: {{ snapshot.get('id', 'unknown') }}
+
+### Modules
+
+{% for mod in snapshot.get('modules', []) %}
+- {{ mod.name }}: {{ mod.impl_notes }}
+{% endfor %}

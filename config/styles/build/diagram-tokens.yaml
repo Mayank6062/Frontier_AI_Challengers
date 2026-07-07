@@ -1,0 +1,27 @@
+diagram:
+  bg-primary:
+    dark: '{primitives.colors.gray-90}'
+    light: '{primitives.colors.gray-0}'
+  bg-surface:
+    dark: '{primitives.colors.gray-80}'
+    light: '{primitives.colors.gray-10}'
+  border-default:
+    dark: '{primitives.colors.gray-70}'
+    light: '{primitives.colors.gray-30}'
+  danger:
+    dark: '{primitives.red-40}'
+    light: '{primitives.red-40}'
+  interactive-primary:
+    dark: '{primitives.blue-40}'
+    light: '{primitives.blue-40}'
+  success:
+    dark: '{primitives.green-40}'
+    light: '{primitives.green-40}'
+  text-primary:
+    dark: '{primitives.colors.gray-10}'
+    light: '{primitives.colors.gray-90}'
+    presentation: '{primitives.blue-40}'
+    print: '{primitives.colors.gray-90}'
+  text-secondary:
+    dark: '{primitives.colors.gray-30}'
+    light: '{primitives.colors.gray-70}'

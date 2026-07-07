@@ -1,0 +1,37 @@
+:root {
+  /* theme: presentation */
+  --og2-text-primary: {primitives.blue-40};
+  --og2-text-secondary: {primitives.colors.gray-70};
+  --og2-bg-primary: {primitives.colors.gray-0};
+  --og2-bg-surface: {primitives.colors.gray-10};
+  --og2-border-default: {primitives.colors.gray-30};
+  --og2-interactive-primary: {primitives.blue-40};
+  --og2-success: {primitives.green-40};
+  --og2-danger: {primitives.red-40};
+  --og2-spacing-space-0: 0px;
+  --og2-spacing-space-1: 4px;
+  --og2-spacing-space-2: 8px;
+  --og2-spacing-space-3: 12px;
+  --og2-spacing-space-4: 16px;
+  --og2-spacing-space-5: 24px;
+  --og2-spacing-space-6: 32px;
+  --og2-typography-body-font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  --og2-typography-body-font-size: 16px;
+  --og2-typography-heading-font-weight: 600px;
+  --og2-typography-body-line-height: 1.4px;
+  --og2-radii-radius-1: 4px;
+  --og2-radii-radius-2: 8px;
+  --og2-shadow-elevation-1: 0 1px 2px rgba(16,24,40,0.04);
+  --og2-shadow-elevation-2: 0 4px 16px rgba(16,24,40,0.08);
+  --og2-motion-duration-fast: 120px;
+  --og2-motion-duration-medium: 220px;
+  --og2-motion-duration-slow: 420px;
+  --og2-density-compact-gap: 8px;
+  --og2-density-comfortable-gap: 16px;
+  --og2-breakpoints-mobile: 0px;
+  --og2-breakpoints-tablet: 768px;
+  --og2-breakpoints-desktop: 1024px;
+  --og2-icons-size-sm: 12px;
+  --og2-icons-size-md: 16px;
+  --og2-icons-size-lg: 24px;
+}

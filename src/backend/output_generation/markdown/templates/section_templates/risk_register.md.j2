@@ -1,0 +1,6 @@
+## Risk Register
+{% for risk in snapshot.risks | default(snapshot.risk_register | default([], true), true) %}
+- **{{ risk.title | default(risk.id | default("Risk", true), true) }}**{% if risk.severity is defined %} ({{ risk.severity }}){% endif %}: {{ risk.mitigation | default(risk.description | default("Mitigation captured in the approved snapshot.", true), true) }}
+{% else %}
+- No open architecture risks were included in the approved snapshot.
+{% endfor %}

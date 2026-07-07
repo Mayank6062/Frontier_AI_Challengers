@@ -1,0 +1,6 @@
+## Technology Stack
+{% for item in snapshot.technology_stack | default(snapshot.technologies | default([], true), true) %}
+- **{{ item.name | default("Technology", true) }}**{% if item.version is defined %} {{ item.version }}{% endif %}: {{ item.purpose | default(item.description | default("Selected for the approved architecture.", true), true) }}
+{% else %}
+- Technology selections are governed by the approved architecture snapshot.
+{% endfor %}

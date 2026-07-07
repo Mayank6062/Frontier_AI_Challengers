@@ -1,0 +1,10 @@
+<section id="citations" data-section="citations">
+  <h2>Citations</h2>
+  <ol>
+    {% for citation in snapshot.citations | default([], true) %}
+    {% include "partials/citation_tag.html.j2" %}
+    {% else %}
+    <li>No citations were attached to the approved snapshot.</li>
+    {% endfor %}
+  </ol>
+</section>

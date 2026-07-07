@@ -1,0 +1,6 @@
+## Architecture Decisions
+{% for decision in snapshot.architecture_decisions | default(snapshot.decisions | default([], true), true) %}
+- **{{ decision.title | default(decision.id | default("Decision", true), true) }}**: {{ decision.description | default(decision.rationale | default("Rationale captured in the approved snapshot.", true), true) }}
+{% else %}
+- Architecture decisions are recorded in the approved snapshot.
+{% endfor %}

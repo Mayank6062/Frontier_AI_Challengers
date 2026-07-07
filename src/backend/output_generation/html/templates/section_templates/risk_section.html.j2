@@ -1,0 +1,10 @@
+<section id="risks" data-section="risks">
+  <h2>Risks</h2>
+  <ul>
+    {% for risk in snapshot.risks | default(snapshot.risk_register | default([], true), true) %}
+    <li><strong>{{ risk.title | default(risk.id | default("Risk", true), true) }}</strong>: {{ risk.mitigation | default(risk.description | default("Mitigation captured in the approved snapshot.", true), true) }}</li>
+    {% else %}
+    <li>No open architecture risks were included in the approved snapshot.</li>
+    {% endfor %}
+  </ul>
+</section>

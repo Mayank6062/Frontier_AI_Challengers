@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ snapshot.title | default("Architecture Portal", true) }}</title>
+  {% include "csp_meta.html.j2" %}
+  {% include "theme_tokens.html.j2" %}
+</head>
+<body>
+  <header role="banner">
+    <h1>{{ snapshot.title | default("Architecture Portal", true) }}</h1>
+    <nav aria-label="Portal navigation">
+      {% for route in routes %}
+      <a href="{{ route.path }}">{{ route.name }}</a>
+      {% endfor %}
+    </nav>
+  </header>
+  <main id="portal-main">
+    {{ sections_html | safe }}
+    {% include "explorers/architecture_explorer.html.j2" %}
+    {% include "explorers/risk_explorer.html.j2" %}
+    {% include "explorers/technology_explorer.html.j2" %}
+    {% include "explorers/citation_explorer.html.j2" %}
+    {% include "explorers/walkthrough_player.html.j2" %}
+  </main>
+  <script type="application/json" id="search-index">[
+    {% for entry in search_index %}
+    {"title":"{{ entry.title }}","path":"{{ entry.path }}","snippet":"{{ entry.snippet }}"}{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]</script>
+  <script>{% include "search_engine.js.j2" %}</script>
+</body>
+</html>

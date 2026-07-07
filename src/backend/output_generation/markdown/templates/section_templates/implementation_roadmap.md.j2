@@ -1,0 +1,6 @@
+## Implementation Roadmap
+{% for milestone in snapshot.implementation_roadmap | default(snapshot.roadmap | default([], true), true) %}
+- **{{ milestone.name | default(milestone.title | default("Milestone", true), true) }}**: {{ milestone.description | default(milestone.outcome | default("Delivery outcome captured in the approved snapshot.", true), true) }}
+{% else %}
+- Implementation sequencing is derived from the approved architecture snapshot.
+{% endfor %}

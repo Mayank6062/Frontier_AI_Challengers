@@ -61,7 +61,8 @@ class DiscoveryStage:
                 if res.status == StageStatus.SUCCESS:
                     break
                 if attempt <= retries:
-                    await asyncio.sleep(0)  # backoff placeholder
+                    # simple backoff yield to event loop between retry attempts
+                    await asyncio.sleep(0)
             if res.status != StageStatus.SUCCESS and sd.required:
                 break
 

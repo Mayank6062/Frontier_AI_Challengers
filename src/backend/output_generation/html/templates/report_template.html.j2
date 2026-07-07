@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ snapshot.title | default("Architecture Report", true) }}</title>
+</head>
+<body>
+  {% include "partials/header.html.j2" %}
+  <main id="content">
+    {% include "partials/toc.html.j2" %}
+    {% include "section_templates/architecture_section.html.j2" %}
+    {% include "section_templates/risk_section.html.j2" %}
+    {% include "section_templates/citation_section.html.j2" %}
+  </main>
+  {% include "partials/footer.html.j2" %}
+</body>
+</html>

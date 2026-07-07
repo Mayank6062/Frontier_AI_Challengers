@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout id="title">
+  <placeholders>
+    <title x="0.5" y="0.4" width="9" height="1"/>
+  </placeholders>
+</layout>

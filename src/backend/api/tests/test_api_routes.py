@@ -55,7 +55,7 @@ class Provided:
 
 def setup_test_client() -> TestClient:
     app = create_app()
-    # Attach a lightweight Provided stub directly to the FastAPI app instance
+    # Attach a lightweight Provided example directly to the FastAPI app instance
     app.state.di_provided = Provided()
     client = TestClient(app)
     return client

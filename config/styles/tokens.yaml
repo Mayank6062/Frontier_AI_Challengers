@@ -1,0 +1,86 @@
+schemaVersion: "2.0.0"
+primitives:
+  colors:
+    gray-0: "#ffffff"
+    gray-10: "#f7f7f8"
+    gray-20: "#eef0f2"
+    gray-30: "#e1e6ea"
+    gray-40: "#c7d2da"
+    gray-50: "#9fb0bb"
+    gray-60: "#7b8f9b"
+    gray-70: "#556677"
+    gray-80: "#394552"
+    gray-90: "#17202b"
+  blue-10: "#e8f4ff"
+  blue-40: "#2b7de9"
+  green-40: "#0f9d58"
+  red-40: "#d93025"
+  amber-40: "#f6c24b"
+  purple-40: "#7b4fe6"
+  cyan-40: "#00bcd4"
+  black: "#000000"
+  transparent: "transparent"
+
+semantic:
+  text-primary:
+    light: "{primitives.colors.gray-90}"
+    dark: "{primitives.colors.gray-10}"
+    print: "{primitives.colors.gray-90}"
+    presentation: "{primitives.blue-40}"
+  text-secondary:
+    light: "{primitives.colors.gray-70}"
+    dark: "{primitives.colors.gray-30}"
+  bg-primary:
+    light: "{primitives.colors.gray-0}"
+    dark: "{primitives.colors.gray-90}"
+  bg-surface:
+    light: "{primitives.colors.gray-10}"
+    dark: "{primitives.colors.gray-80}"
+  border-default:
+    light: "{primitives.colors.gray-30}"
+    dark: "{primitives.colors.gray-70}"
+  interactive-primary:
+    light: "{primitives.blue-40}"
+    dark: "{primitives.blue-40}"
+  success:
+    light: "{primitives.green-40}"
+    dark: "{primitives.green-40}"
+  danger:
+    light: "{primitives.red-40}"
+    dark: "{primitives.red-40}"
+
+components:
+  spacing:
+    space-0: 0
+    space-1: 4
+    space-2: 8
+    space-3: 12
+    space-4: 16
+    space-5: 24
+    space-6: 32
+  typography:
+    body-font-family: "Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial"
+    body-font-size: 16
+    heading-font-weight: 600
+    body-line-height: 1.4
+  radii:
+    radius-1: 4
+    radius-2: 8
+  shadow:
+    elevation-1: "0 1px 2px rgba(16,24,40,0.04)"
+    elevation-2: "0 4px 16px rgba(16,24,40,0.08)"
+  motion:
+    duration-fast: 120
+    duration-medium: 220
+    duration-slow: 420
+  density:
+    compact-gap: 8
+    comfortable-gap: 16
+  breakpoints:
+    mobile: 0
+    tablet: 768
+    desktop: 1024
+  icons:
+    size-sm: 12
+    size-md: 16
+    size-lg: 24

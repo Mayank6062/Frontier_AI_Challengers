@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<theme>
+  <name>default</name>
+  <fonts>
+    <font name="heading">Arial</font>
+    <font name="body">Arial</font>
+  </fonts>
+  <colors>
+    <primary>#003366</primary>
+    <accent>#0077CC</accent>
+  </colors>
+</theme>

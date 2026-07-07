@@ -1,0 +1,7 @@
+<?xml version="11.0" encoding="utf-8"?>
+<layout id="diagram">
+  <placeholders>
+    <heading x="0.5" y="0.4" width="9" height="0.8"/>
+    <diagram x="0.5" y="1.4" width="9" height="5.2"/>
+  </placeholders>
+</layout>

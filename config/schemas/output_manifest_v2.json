@@ -1,0 +1,118 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ArchitectIQ Output Bundle Manifest v2",
+  "description": "Authoritative metadata for a generated output bundle. Immutable after generation.",
+  "type": "object",
+  "required": [
+    "manifest_version", "bundle_id", "engagement_id",
+    "engagement_version", "bundle_version", "status",
+    "generated_at", "generation_duration_seconds",
+    "generator_versions", "template_versions",
+    "files", "composite_hash", "provenance", "personas"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "manifest_version":  {"type": "string", "enum": ["2.0.0"], "description": "Schema version — see ADR-OG2-10"},
+    "bundle_id":         {"type": "string", "format": "uuid"},
+    "engagement_id":     {"type": "string", "minLength": 1},
+    "engagement_version":{"type": "integer", "minimum": 1},
+    "bundle_version":    {"type": "integer", "minimum": 1},
+    "status":            {"type": "string", "enum": ["COMPLETE", "PARTIAL", "FAILED"]},
+    "generated_at":      {"type": "string", "format": "date-time"},
+    "generation_duration_seconds": {"type": "number", "minimum": 0},
+    "generator_versions": {
+      "type": "object",
+      "description": "Semantic version of every generator module used",
+      "additionalProperties": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"}
+    },
+    "template_versions": {
+      "type": "object",
+      "description": "Version of each template pack used in generation",
+      "additionalProperties": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"}
+    },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["file_id","relative_path","file_type","media_type",
+                     "size_bytes","content_hash","status","generation_timestamp",
+                     "generator","template_version"],
+        "additionalProperties": false,
+        "properties": {
+          "file_id":             {"type": "string", "format": "uuid"},
+          "relative_path":       {"type": "string", "pattern": "^[^/]"},
+          "file_type":           {"type": "string"},
+          "media_type":          {"type": "string"},
+          "size_bytes":          {"type": "integer", "minimum": 0},
+          "content_hash":        {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "status":              {"type": "string", "enum": ["SUCCESS","PARTIAL","FAILED"]},
+          "generation_timestamp":{"type": "string", "format": "date-time"},
+          "generator":           {"type": "string"},
+          "template_version":    {"type": "string"},
+          "persona_scope":       {"type": "array", "items": {"type": "string"},
+                                  "description": "Personas who receive this file. Empty = all."},
+          "relationships":       {
+            "type": "array",
+            "description": "Artifact relationships (e.g. diagram source → SVG → PNG)",
+            "items": {
+              "type": "object",
+              "required": ["type", "target_file_id"],
+              "properties": {
+                "type": {"type": "string", "enum": ["derived_from","renders_as","references","summarized_by"]},
+                "target_file_id": {"type": "string", "format": "uuid"}
+              }
+            }
+          },
+          "errors":   {"type": "array", "items": {"type": "string"}},
+          "warnings": {"type": "array", "items": {"type": "string"}},
+          "metadata": {"type": "object"}
+        }
+      }
+    },
+    "composite_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 of sorted(all file content_hash values) + engagement_id + bundle_version"
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["approved_by","approved_at","approval_ledger_hash","snapshot_version","trace_id"],
+      "additionalProperties": false,
+      "properties": {
+        "approved_by":           {"type": "string"},
+        "approved_at":           {"type": "string", "format": "date-time"},
+        "approval_ledger_hash":  {"type": "string"},
+        "snapshot_version":      {"type": "string"},
+        "trace_id":              {"type": "string"},
+        "generation_environment":{"type": "string"},
+        "pipeline_version":      {"type": "string"}
+      }
+    },
+    "personas": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "enum": ["judge","executive","architect","reviewer","auditor","developer","print","presentation","all"]},
+      "description": "Persona bundles generated from this master bundle"
+    },
+    "quality_gate_result": {
+      "type": "object",
+      "properties": {
+        "overall_severity": {"type": "string", "enum": ["PASS","WARN","ERROR","BLOCKER"]},
+        "validator_results": {"type": "object"}
+      }
+    },
+    "architecture_score": {
+      "type": "object",
+      "properties": {
+        "composite_score": {"type": "number"},
+        "grade":           {"type": "string"},
+        "health_status":   {"type": "string"}
+      }
+    },
+    "archive_format":      {"type": "string", "enum": ["zip","tar.gz"], "default": "zip"},
+    "compression_enabled": {"type": "boolean", "default": false},
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "errors":   {"type": "array", "items": {"type": "string"}}
+  }
+}

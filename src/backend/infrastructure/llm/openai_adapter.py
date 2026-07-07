@@ -1,6 +1,7 @@
-"""OpenAI adapter placeholder implementing LLMInterface.
+"""Lightweight OpenAI adapter implementing LLMInterface.
 
-Placeholder for future OpenAI SDK integration; mirrors Anthropic adapter.
+This adapter mirrors the Anthropic adapter and provides a minimal implementation.
+In production this would wrap the OpenAI SDK.
 """
 
 from __future__ import annotations

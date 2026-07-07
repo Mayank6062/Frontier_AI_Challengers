@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Generated Report - {{ snapshot.get('id', 'unknown') }}</title>
+  </head>
+  <body>
+    <header>
+      <h1>Report for {{ snapshot.get('id', 'unknown') }}</h1>
+    </header>
+    <main>
+      <section>
+        <h2>Summary</h2>
+        <p>{{ snapshot.get('summary', 'No summary') }}</p>
+      </section>
+    </main>
+    <footer>
+      <small>Generated at build time</small>
+    </footer>
+  </body>
+</html>

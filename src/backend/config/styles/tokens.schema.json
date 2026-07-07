@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OG2 Tokens Schema",
+  "type": "object",
+  "required": ["schemaVersion", "primitives", "semantic", "components"],
+  "properties": {
+    "schemaVersion": {"type": "string"},
+    "primitives": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {"type": "string"},
+          {
+            "type": "object",
+            "patternProperties": {
+              "^[a-zA-Z0-9_-]+$": {"type": "string"}
+            }
+          }
+        ]
+      }
+    },
+    "semantic": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "light": {"type": "string"},
+          "dark": {"type": "string"},
+          "print": {"type": "string"},
+          "presentation": {"type": "string"}
+        },
+        "required": ["light", "dark"]
+      }
+    },
+    "components": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {"type": ["string", "number"]}
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "manifest_version": "2.0.0",
+  "bundle_id": "b1",
+  "engagement_id": "e1",
+  "engagement_version": 1,
+  "bundle_version": 1,
+  "status": "PENDING",
+  "generated_at": "2024-01-01T00:00:00Z",
+  "generation_duration_seconds": 0.0,
+  "generator_versions": {
+    "gen": "1"
+  },
+  "template_versions": {
+    "v1": "1"
+  },
+  "files": [
+    {
+      "file_id": "f1",
+      "relative_path": "doc1.txt",
+      "file_type": "text",
+      "media_type": "text/plain",
+      "size_bytes": 11,
+      "content_hash": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+      "status": "SUCCESS",
+      "generation_timestamp": "2024-01-01T00:00:00Z",
+      "generator": "gen",
+      "template_version": "v1",
+      "persona_scope": [
+        "personaA"
+      ],
+      "relationships": [],
+      "errors": [],
+      "warnings": [],
+      "metadata": {}
+    }
+  ],
+  "composite_hash": "43a12d22b072c72c56e11cde89e6a4d74d183062cc78a60ef8e63eeab4431308",
+  "provenance": {
+    "approved_by": "x",
+    "approved_at": "2024-01-01T00:00:00Z",
+    "approval_ledger_hash": "abc",
+    "snapshot_version": "1",
+    "trace_id": "t1",
+    "generation_environment": null,
+    "pipeline_version": null
+  },
+  "personas": [
+    "personaA"
+  ],
+  "quality_gate_result": null,
+  "architecture_score": null,
+  "archive_format": "zip",
+  "compression_enabled": true,
+  "warnings": [],
+  "errors": []
+}

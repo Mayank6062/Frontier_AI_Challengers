@@ -1,4 +1,4 @@
-"""Anthropic adapter placeholder implementing LLMInterface.
+"""Lightweight Anthropic adapter implementing LLMInterface.
 
 This adapter is intentionally minimal and mirrors the same API as other
 adapters; in production this would wrap the Anthropic SDK.

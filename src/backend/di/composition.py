@@ -73,6 +73,22 @@ def create_trace_handle(
     return start_trace(name, metadata)
 
 
+def create_bundle_assembler(storage: StorageService | None = None):
+    # import here to avoid circular imports at module import time
+    from backend.output_generation.bundle.bundle_assembler import BundleAssembler
+
+    fs = None
+    try:
+        # prefer local filesystem-backed storage for artifact persistence
+        from backend.output_generation.bundle.storage import FilesystemOutputStorage
+
+        fs = FilesystemOutputStorage(".output_storage")
+    except Exception:
+        fs = None
+
+    return BundleAssembler(storage=fs)
+
+
 class DIContainer:
     def __init__(self, secrets_initial: Optional[dict[str, str]] = None) -> None:
         self._secrets_initial = secrets_initial
@@ -97,6 +113,8 @@ class DIContainer:
         logger = create_logger()
         print("DI: create_metrics")
         metrics = create_metrics()
+        print("DI: create_bundle_assembler")
+        bundle_assembler = create_bundle_assembler()
 
         return DIContainer.Provided(
             cache=cache,
@@ -108,6 +126,7 @@ class DIContainer:
             llm=llm,
             logger=logger,
             metrics=metrics,
+            bundle_assembler=bundle_assembler,
         )
 
     class Provided:
@@ -122,6 +141,7 @@ class DIContainer:
             llm: LLMInterface,
             logger: Logger,
             metrics: Metrics,
+            bundle_assembler: object | None = None,
         ) -> None:
             self.cache = cache
             self.storage = storage
@@ -132,6 +152,7 @@ class DIContainer:
             self.llm = llm
             self.logger = logger
             self.metrics = metrics
+            self.bundle_assembler = bundle_assembler
 
 
 __all__ = ["DIContainer"]

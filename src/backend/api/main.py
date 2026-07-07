@@ -74,7 +74,7 @@ def create_app() -> FastAPI:
 
     @app.on_event("shutdown")
     async def _shutdown_event() -> None:
-        # Placeholder for graceful shutdown hooks (no business logic)
+        # Graceful shutdown hooks (no business logic required here)
         pass
 
     @app.get("/healthz")

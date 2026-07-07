@@ -1,0 +1,6 @@
+## Citations
+{% for citation in snapshot.citations | default([], true) %}
+{% include "partials/citation_tag.md.j2" %}
+{% else %}
+- No citations were attached to the approved snapshot.
+{% endfor %}

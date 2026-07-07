@@ -1,0 +1,11 @@
+<section id="architecture" data-section="architecture">
+  <h2>Architecture</h2>
+  <p>{{ snapshot.summary | default(snapshot.executive_summary | default("Architecture content is generated from the approved snapshot.", true), true) }}</p>
+  <ul>
+    {% for decision in snapshot.architecture_decisions | default(snapshot.decisions | default([], true), true) %}
+    <li><strong>{{ decision.title | default(decision.id | default("Decision", true), true) }}</strong>: {{ decision.description | default(decision.rationale | default("Rationale captured in the approved snapshot.", true), true) }}</li>
+    {% else %}
+    <li>Architecture decisions are recorded in the approved snapshot.</li>
+    {% endfor %}
+  </ul>
+</section>

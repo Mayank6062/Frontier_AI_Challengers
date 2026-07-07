@@ -1,0 +1,10 @@
+(function () {
+  const source = document.getElementById("search-index");
+  const entries = source ? JSON.parse(source.textContent || "[]") : [];
+  window.ogSearch = function (query) {
+    const normalized = String(query || "").toLowerCase();
+    return entries.filter(function (entry) {
+      return entry.title.toLowerCase().includes(normalized) || entry.snippet.toLowerCase().includes(normalized);
+    });
+  };
+})();

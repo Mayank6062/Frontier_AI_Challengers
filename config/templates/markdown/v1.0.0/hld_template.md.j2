@@ -1,0 +1,13 @@
+## High-Level Design
+
+Generated from approved snapshot: {{ snapshot.get('id', 'unknown') }}
+
+### Executive Summary
+
+{{ snapshot.get('summary', 'No summary provided') }}
+
+### Components
+
+{% for comp in snapshot.get('components', []) %}
+- {{ comp.name }}: {{ comp.description }}
+{% endfor %}
